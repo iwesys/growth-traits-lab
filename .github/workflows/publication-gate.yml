@@ -14,8 +14,9 @@ jobs:
           fetch-depth: 0
       - name: Run publication-gate check against the merge base
         run: |
+          EMPTY_TREE="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
           BASE="${{ github.event.pull_request.base.sha || github.event.before }}"
           if [ -z "$BASE" ] || ! git cat-file -e "$BASE" 2>/dev/null; then
-            BASE="HEAD~1"
+            BASE="$(git rev-parse HEAD~1 2>/dev/null || echo "$EMPTY_TREE")"
           fi
           bash lab/publication-gate-check.sh "$BASE"

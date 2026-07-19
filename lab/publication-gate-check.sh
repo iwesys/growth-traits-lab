@@ -11,9 +11,21 @@
 
 set -euo pipefail
 
+# Methodology/policy files are allowed to discuss thresholds and worked examples
+# in prose (e.g. "at n=3, removing one participant leaves n=2") — they describe
+# the gate, they aren't cohort data the gate protects. Only exclude files that
+# talk *about* the policy, never a real findings/report file.
+POLICY_EXCLUDES=(
+    ':(exclude)lab/publication-gate-check.sh'
+    ':(exclude)cohort/publication-gate.md'
+    ':(exclude)methodology/discipline.md'
+    ':(exclude)methodology/six-point-checklist.md'
+    ':(exclude)methodology/pre-registration-template.md'
+)
+
 BASE_REF="${1:-HEAD~1}"
 echo "[publication-gate] checking diff against $BASE_REF..."
-DIFF=$(git diff "$BASE_REF" -- . ':(exclude)lab/publication-gate-check.sh')
+DIFF=$(git diff "$BASE_REF" -- . "${POLICY_EXCLUDES[@]}")
 
 fail=0
 
